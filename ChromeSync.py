@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 chrome --remote-debugging api test
 """
@@ -8,6 +7,13 @@ import requests
 import websocket
 import time
 
+TabList = []
+
+def Navigate(URL:str, TabID = None) -> bool:
+    """
+    Navigate to URL. If TabID is't provided - use last active tab
+    """
+    return(True)
 
 def send():
     # Setup websocket connection:
