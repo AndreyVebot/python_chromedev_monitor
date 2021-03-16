@@ -33,12 +33,21 @@ class ListenEvents:
         self.interval_request_time = interval_request_time
 
         self.websockets_table = {}
-        self.urls = []
+        self.urls = {}
         self.user_thread = None
         self.run_user_event_request = None
 
     def set_user_call_function(self, func):
         self.raise_event = func
+
+    async def load_page_from_internet(self, url):
+        if self.urls.get(url):
+            return self.urls.get(url)
+        response = await requests_async.get(url)
+        data = response.text
+        self.urls[url] = data
+
+        return data
 
     #
     #
@@ -68,10 +77,11 @@ class ListenEvents:
             while data.get("method"):
                 data = json.loads(await ws_local_connection.recv())
 
-            if "result" in data:
-                return data["result"]["content"]
+            if "result" not in data or data.get("result").get("content") == "":
+                data = await self.load_page_from_internet(ws_local.frame_tree_content["frameTree"]["frame"]["url"])
+                return data
             else:
-                return ""
+                return data["result"]["content"]
 
     #
     #
