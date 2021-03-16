@@ -43,7 +43,10 @@ class ListenEvents:
     async def load_page_from_internet(self, url):
         if self.urls.get(url):
             return self.urls.get(url)
-        response = await requests_async.get(url)
+        try:
+            response = await requests_async.get(url)
+        except:
+            return ""
         data = response.text
         self.urls[url] = data
 
